@@ -1,0 +1,583 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1xvScQEIEPWCSqSAgeOqGVYmupj7QpW9eLDELXotK07c",
+          "mode": "list",
+          "cachedResultName": "employee data ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xvScQEIEPWCSqSAgeOqGVYmupj7QpW9eLDELXotK07c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xvScQEIEPWCSqSAgeOqGVYmupj7QpW9eLDELXotK07c/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d6717f2b-a8f8-44bc-8d8d-cb9e01763993",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "auroubsrlX8HqqRm",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "797e909d-522b-4f27-bd22-1e66b46e3a5e",
+              "name": "Employee Name ",
+              "value": "={{ $json['Employee Name '] }}",
+              "type": "string"
+            },
+            {
+              "id": "9b68292a-b331-4a63-834f-c016ef1f902d",
+              "name": "Days Present ",
+              "value": "={{ $json['Days Present '] }}",
+              "type": "number"
+            },
+            {
+              "id": "dd0c5a8f-c9ae-45a2-b261-f46257bc11ba",
+              "name": "Days Absent",
+              "value": "={{ $json['Days Absent'] }}",
+              "type": "number"
+            },
+            {
+              "id": "e6b54e68-68f6-48cf-8e74-25bb03581621",
+              "name": "Tasks Completed",
+              "value": "={{ $json['Tasks Completed'] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fb3ea56e-25ed-4dfb-99aa-c77be9feb667",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Google Sheets Trigger').item.json['Days Present '] }}",
+                    "rightValue": 22,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "09ff25e8-73f5-4f41-8af3-0cf7ab12d28c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HIGH"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "22bfe6e3-24c6-4158-bc0b-0fe5ca8d14de",
+                    "leftValue": "={{ $json['Days Present '] >= 15 && $json['Days Present '] <=22 }}",
+                    "rightValue": "=15",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Medium"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b80bdcbe-287d-45c3-b533-69e16a809f50",
+                    "leftValue": "={{ $('Google Sheets Trigger').item.json['Days Present '] }}",
+                    "rightValue": 15,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Low"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c6beab93-2bac-4dbc-92d4-2be792e46cab",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c315e73-2aee-40ce-b43e-181b24626822",
+              "name": "Attendance category",
+              "value": "HIGH",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -160
+      ],
+      "id": "9f0fbaad-56ea-4d33-a455-bae6a8d479b8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e6c8581-2559-4287-9a69-75cd6e5fc06b",
+              "name": "Attendance Category",
+              "value": "Medium",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "b12fc40f-869d-4afd-8b55-3e6342b7b8f0",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08ede375-e9c9-40a5-8f5a-25cdad81ec96",
+              "name": "Attendance Category",
+              "value": "Low",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        192
+      ],
+      "id": "b7030856-f1ec-4c75-964e-7c4aa29a10c3",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "52128e41-1693-49fc-b553-7a78bb94dcd5",
+                    "leftValue": "={{ $json['Tasks Completed'] }}",
+                    "rightValue": 15,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HIGH"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        -109.54999542236328
+      ],
+      "id": "bb98572c-dc19-41a4-ac9e-2034c9db192f",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Tasks Completed'] }}",
+                    "rightValue": 15,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    },
+                    "id": "41168519-b059-44fd-9083-2100726c9ce5"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Medium"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f7eaaf89-7e85-41fe-a6c5-2a13a4e4eb32",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Tasks Completed'] }}",
+                    "rightValue": 15,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    },
+                    "id": "8adcb5e8-025e-452e-8335-509b55e4f2c0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        192
+      ],
+      "id": "46a64a10-5001-4891-95d4-83e3e19b2049",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xvScQEIEPWCSqSAgeOqGVYmupj7QpW9eLDELXotK07c",
+          "mode": "list",
+          "cachedResultName": "employee data ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xvScQEIEPWCSqSAgeOqGVYmupj7QpW9eLDELXotK07c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1926534672,
+          "mode": "list",
+          "cachedResultName": "processed sheet ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xvScQEIEPWCSqSAgeOqGVYmupj7QpW9eLDELXotK07c/edit#gid=1926534672"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Days Present": "={{ $json['Days Present '] }}",
+            "Employee Name ": "={{ $json['Employee Name '] }}",
+            "Days Absent": "={{ $json['Days Absent'] }}",
+            "Tasks Completed": "={{ $json['Tasks Completed'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Employee Name ",
+              "displayName": "Employee Name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Present",
+              "displayName": "Days Present",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Absent",
+              "displayName": "Days Absent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tasks Completed",
+              "displayName": "Tasks Completed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        -52.04999542236328
+      ],
+      "id": "d1b8ded3-0f96-44a9-95f2-1fa5a56262bd",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oZM4xK4Efrg8TW6q",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f657058a-c64c-4871-9f74-44916feeef77",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8f3a0af953a7b9f7156cff99591e7e8e52c2cbdddfdcffe260f804c904532f96"
+  },
+  "id": "xr8cYextF2Ra6eHc",
+  "tags": []
+}
